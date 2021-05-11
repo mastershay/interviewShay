@@ -11,14 +11,28 @@ use Mini\Model\Model;
  */
 class ExampleModel extends Model
 {
+    private $code;
+    private $description;
+
+    public function setCode(string $code) {
+        $this->code = $code;
+    }
+    public function getCode() {
+        return $this->code;
+    }
+    public function setDescription(string $description) {
+        $this->description = $description;
+    }
+    public function getDescription() {
+        return $this->description;
+    }
+
     /**
      * Get example data by ID.
-     *
-     * @param int $id example id
-     *  
-     * @return array example data
+     * @param int $id
+     * @return ExampleModel
      */
-    public function get(int $id): array
+    public function get(int $id): ExampleModel
     {
         $sql = '
             SELECT
@@ -31,23 +45,19 @@ class ExampleModel extends Model
             WHERE
                 example_id = ?';
 
-        return $this->db->select([
+        return $this->db->get->select([
             'title'  => 'Get example data',
             'sql'    => $sql,
             'inputs' => [$id]
         ]);
+
     }
 
     /**
-     * Create an example.
-     *
-     * @param string $created     example created on
-     * @param string $code        example code
-     * @param string $description example description
-     *  
-     * @return int example id
+     * Create record
+     * @return int
      */
-    public function create(string $created, string $code, string $description): int
+    public function create(): int
     {
         $sql = '
             INSERT INTO
@@ -64,9 +74,9 @@ class ExampleModel extends Model
             'title'  => 'Create example',
             'sql'    => $sql,
             'inputs' => [
-                $created,
-                $code,
-                $description
+                now(),
+                $this->code,
+                $this->description
             ]
         ]);
 

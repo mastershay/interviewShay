@@ -17,21 +17,21 @@ class ExampleController extends Controller
 {
     /**
      * Example view model.
-     * 
+     *
      * @var Example\Model\ExampleModel|null
      */
     protected $model = null;
 
     /**
      * Example view builder.
-     * 
+     *
      * @var Example\View\ExampleView|null
      */
     protected $view = null;
 
     /**
      * Setup.
-     * 
+     *
      * @param ExampleModel $model example data
      * @param ExampleView  $view  example view builder
      */
@@ -41,25 +41,32 @@ class ExampleController extends Controller
         $this->view  = $view;
     }
 
+    public function get(Request $request) {
+        ExampleModel::get();
+    }
+
     /**
      * Create an example and display its data.
-     * 
-     * @param Request $request http request
-     * 
-     * @return string view template
+     * @param Request $request
+     * @return string
+     * @throws BadInputException
      */
     public function createExample(Request $request): string
     {
-        if (! $code = $request->request->get('code')){
+        $model = new ExampleModel();
+
+        if (!$request->request->get('code')){
             throw new BadInputException('Example code missing');
         }
+        $model->setCode($request->request->get('code'));
 
-        if (! $description = $request->request->get('description')) {
+        if (!$request->request->get('description')) {
             throw new BadInputException('Example description missing');
         }
+        $model->setDescription($request->request->get('description'));
 
-        return $this->view->get(
-            $this->model->create(now(), $code, $description)
-        );
+        $id = $model->create();
+
+        return $this->view->get($model);
     }
 }
